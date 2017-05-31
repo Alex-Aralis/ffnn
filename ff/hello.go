@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 
 	"gonum.org/v1/gonum/matrix/mat64"
 
@@ -16,9 +17,7 @@ func main() {
 	var b mat64.Dense
 
 	b.Apply(
-		func(i, j int, v float64) float64 {
-			return float64(i+j) + v
-		},
+		rand.Float64,
 		a,
 	)
 
