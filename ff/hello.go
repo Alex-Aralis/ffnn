@@ -11,5 +11,8 @@ func main() {
 
 	a := util.NewRandMatrix(4, 2)
 
-	fmt.Print(a)
+	b := util.FMap(a)
+
+	fmt.Println(a)
+	fmt.Println(b)
 }
