@@ -10,7 +10,7 @@ import (
 var source *rand.Rand
 
 // NewRandMatrix builds a randomely initallized matrix of size m by n.
-func NewRandMatrix(m, n int) mat64.Matrix {
+func NewRandMatrix(m, n int) *mat64.Dense {
 	if source == nil {
 		rg := rand.NewSource(time.Now().UnixNano())
 

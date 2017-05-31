@@ -8,7 +8,7 @@ import (
 
 // LogisticActivation applies a logistic activation function to every entry
 // memeber of the povided vector.
-func LogisticActivation(net *mat64.Dense) mat64.Dense {
+func LogisticActivation(net *mat64.Dense) *mat64.Dense {
 	var o mat64.Dense
 
 	o.Apply(
@@ -18,7 +18,7 @@ func LogisticActivation(net *mat64.Dense) mat64.Dense {
 		net,
 	)
 
-	return o
+	return &o
 }
 
 // Logistic returns the standard logistic function evaluated at x
