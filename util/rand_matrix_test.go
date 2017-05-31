@@ -17,6 +17,7 @@ func TestNewRandMatrix(t *testing.T) {
 
 	if c != tc || r != tr {
 		t.Errorf("Generated matrix of wrong dimensions, expected %v x %v and go %v x %v.", tc, tr, c, r)
+		return
 	}
 
 	for i := range iter.N(c) {
