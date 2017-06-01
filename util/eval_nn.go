@@ -9,7 +9,7 @@ func EvalNN(x *mat64.Dense, layers []*mat64.Dense) *mat64.Dense {
 	for _, m := range layers {
 		var y mat64.Dense
 
-		y.Mul(m.T(), x)
+		y.Mul(m, x)
 		x = LogisticActivation(&y)
 	}
 

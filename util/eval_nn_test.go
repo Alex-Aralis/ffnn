@@ -9,9 +9,9 @@ import (
 
 func TestEvalNN(t *testing.T) {
 	layers := []*mat64.Dense{
-		makeOnesMatrix(4, 3),
+		makeOnesMatrix(3, 4),
 		makeOnesMatrix(3, 3),
-		makeOnesMatrix(3, 2),
+		makeOnesMatrix(2, 3),
 	}
 
 	x := mat64.NewDense(4, 1, []float64{2, 1, 2, 3})
