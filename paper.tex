@@ -1,0 +1,314 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+
+
+\pagestyle{empty} % required
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{color}
+
+\doublespacing
+
+\title{\textbf{Back-Propagation of a Forward Feed Neural Net via Multivariate Vector Calculus } \\ Purdue University \\ \small{Computer Science}}
+\author{Alex Aralis}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Problem Statement}
+
+A Forward Feed Neural Net (FFNN) is characterized by $L$ matrices $\textbf{W}_l$ where $L$ is the number of layers in the neural net and $l \in \{1, 2,... , L\}$, an activations function $\varphi \in  \mathbb{R} \to  \mathbb{R}$, and an error function $E \in  \mathbb{R}^M \times \mathbb{R}^M \to  \mathbb{R}$ where $M$ is the size of the output of the FFNN.  
+
+\begin{align}
+\boldsymbol{W}_l 
+&=
+\begin{bmatrix}
+w_{11} & \cdots & w_{1n}\\ 
+\vdots &  \ddots & \vdots\\ 
+w_{m1} & \cdots & w_{mn}
+\end{bmatrix}
+\end{align}
+
+Where $w_{ij} \in \mathbb{R}$ is the weighting between the $j$th output of layer $l-1$ and the output of the $l$th layer.  These weightings will be referred to using the notation $\left[\boldsymbol{W}_l\right]_{ij}$ to disambiguate the weightings of the layers.
+
+The output of a layer $l$ is related to the previous layer $l-1$ by linear combination and an activation function $\varphi$. 
+\begin{align}
+\boldsymbol{n}_l 
+&= 
+\boldsymbol{W}_l \boldsymbol{\omega}_{l-1}
+\end{align}
+
+Where $\boldsymbol{\omega}_{l-1}$ is a vector of the outputs from the previous layer and $\boldsymbol{n}_l$ is a vector of the precursor linear combinations for $\boldsymbol{\omega}_{l}$. $\boldsymbol{n}_l$ is merely an intermediate result useful in later computations. Finally,
+\begin{align}
+\boldsymbol{\omega}_{l} 
+&= 
+\varphi(\boldsymbol{n}_l)
+\end{align}
+
+Where $\varphi(\boldsymbol{n}_l)$ is simply the application of the $\varphi$ on each of the entries in $\boldsymbol{n}_l$.  For all FFNN's $\boldsymbol{\omega}_0$ is the input and $\boldsymbol{\omega}_L$ is the output.  Using (1-3) is enough to evaluate inputs to the FFNN.
+
+The error function $E$, an output $\boldsymbol{\omega}_L$, and the desired output for an input $\boldsymbol{t}_{\boldsymbol{\omega}_0}$  determine the error of the FFNN for an input $\boldsymbol{\omega}_0$.  Differentiating $E$ with respect to the weights of each layer $\left[\textbf{W}_l\right]_{ij}$ provides the information needed to "teach" the FFNN.
+
+It would be nice if,
+\begin{align}
+\frac{\partial E}{\partial \boldsymbol{W}_l}
+\end{align}
+
+could be evaluated directly. Let's try with the outer most layer's weights.
+\begin{align}
+\frac{\partial E}{\partial \boldsymbol{W}_L} 
+&= 
+\frac{\partial}{\partial \boldsymbol{W}_L}\left[E( \varphi(\boldsymbol{W}_{L} \boldsymbol{\omega}_{L-1}))\right] \\
+&=
+\frac{\partial}{\partial \boldsymbol{W}_L}\left[E( \varphi(\boldsymbol{n}_L))\right] \\
+&=
+\frac{\partial E}{\partial \boldsymbol{\omega}_{L}} 
+\frac{\partial \boldsymbol{\omega}_{L}}{\partial \boldsymbol{n}_L}
+\frac{\partial \boldsymbol{n}_L}{\partial \boldsymbol{W}_L}
+\end{align}
+
+This looks promising.  
+
+\begin{align}
+\frac{\partial \boldsymbol{n}_L}{\partial \boldsymbol{W}_L} =&\ 
+\frac{\partial}{\partial \boldsymbol{W}_L} \left[ \boldsymbol{W}_{L} \boldsymbol{\omega}_{L-1} \right] \\
+\stackrel{?}{=}&\ \boldsymbol{\omega}_{L-1}
+\end{align}
+
+Hmm.  However differentiation of a vector with respect to a matrix is not well defined.  The other partial differentials are more easily evaluated.
+\begin{align}
+\frac{\partial \boldsymbol{\omega}_{L}}{\partial \boldsymbol{n}_L} 
+&=
+\left[ \frac{\partial \left[ \boldsymbol{\omega}_{L} \right]_i}{\partial \left[ \boldsymbol{n}_L\right]_j} \right] \\
+&=
+\begin{bmatrix}
+\frac{\partial \left[ \boldsymbol{\omega}_{L} \right]_1}{\partial \left[ \boldsymbol{n}_L\right]_1} &\\ 
+& \ddots &\\ 
+& & \frac{\partial \left[ \boldsymbol{\omega}_{L} \right]_N}{\partial \left[ \boldsymbol{n}_L\right]_N}
+\end{bmatrix} \\
+&=
+\begin{bmatrix}
+\varphi'(\left[\boldsymbol{n}_L\right]_1) & \\ 
+& \ddots &\\ 
+& & \varphi'(\left[\boldsymbol{n}_L\right]_N)
+\end{bmatrix}
+\end{align}
+
+$\forall i, j$ s.t. $i \neq j$,
+$\frac{\partial \left[ \boldsymbol{\omega}_{l} \right]_i}{\partial \left[ \boldsymbol{n}_l\right]_j} = 0 $ 
+because 
+$[\boldsymbol{\omega}_l]_i = \varphi(\left[\boldsymbol{n}_l\right]_i)$ 
+does not depend on 
+$\left[\boldsymbol{n}_l\right]_j$ 
+making 
+$\frac{\partial \boldsymbol{\omega}_{l}}{\partial \boldsymbol{n}_l}$ 
+diagonal, also $\varphi'$ must exist.
+\begin{align}
+\frac{\partial E}{\partial \boldsymbol{\omega}_{L}} 
+&= 
+\begin{bmatrix}
+\frac{\partial E}{\partial \left[ \boldsymbol{\omega}_{L} \right]_1}
+\frac{\partial E}{\partial \left[ \boldsymbol{\omega}_{L} \right]_2}
+\cdots
+\frac{\partial E}{\partial \left[ \boldsymbol{\omega}_{L} \right]_N}
+\end{bmatrix} \\
+&=
+\begin{bmatrix}
+E'( \left[ \boldsymbol{\omega}_{L} \right]_1)
+E'( \left[ \boldsymbol{\omega}_{L} \right]_2)
+\cdots
+E'( \left[ \boldsymbol{\omega}_{L} \right]_N)
+\end{bmatrix}
+\end{align}
+
+Here we see $E$ must be differentiable as well.  Putting it all back together we get,
+\begin{align} 
+\begin{bmatrix}
+E'( \left[ \boldsymbol{\omega}_{L} \right]_1)
+E'( \left[ \boldsymbol{\omega}_{L} \right]_2)
+\cdots
+E'( \left[ \boldsymbol{\omega}_{L} \right]_N)
+\end{bmatrix}
+\begin{bmatrix}
+\varphi'(\left[\boldsymbol{n}_L\right]_1) & \\ 
+& \ddots &\\ 
+& & \varphi'(\left[\boldsymbol{n}_L\right]_N)
+\end{bmatrix}
+\boldsymbol{\omega}_{L-1}
+\end{align}
+
+However this evaluates to a scalar, which cannot be correct, because we are looking for $\frac{\partial E}{\partial [\boldsymbol{W}_l]_{ij}} \forall i, j$.  Perhaps there is some higher dimensional treatment of differentiation by a matrix that could yield better results, however instead I will attempt to work backwards from the end goal.
+\begin{align}
+\boldsymbol{\Delta}_l 
+&= 
+\left[ \frac{\partial E}{\partial [\boldsymbol{W}_{l}]_{ij}} \right]
+\end{align}
+
+Now evaluation can proceed from the perspective of $\frac{\partial E}{\partial [\boldsymbol{W}_l]_{ij}}$ and factoring $\boldsymbol{\Delta}_l$ can be done at a later stage.
+\begin{align}
+\frac{\partial E}{\partial [\boldsymbol{W}_l]_{ij}}
+&=
+\frac{\partial E}{ \partial \left[ \textbf{\textit{n}}_l \right]_i }
+\frac{ \partial \left[ \textbf{\textit{n}}_l \right]_i }{ \partial \left[ \boldsymbol{W}_l \right]_{ij} } \\ 
+&=
+\frac{\partial E}{ \partial \left[ \textbf{\textit{n}}_l \right]_i }[\boldsymbol{\omega}_{l-1}]_j
+\end{align}
+
+Now things become slightly more interesting, because $\boldsymbol{n}_l$ depends on all the previous layers, differentiation is not simple.
+\begin{align}
+\frac{\partial E}{ \partial \left[ \textbf{\textit{n}}_l \right]_i } 
+&= 
+\frac{\partial E}{\partial \boldsymbol{n}_{l+1}}
+\frac{\partial \boldsymbol{n}_{l+1}}{ \partial \left[ \boldsymbol{\omega}_l \right]_i }
+\frac{\partial \left[ \boldsymbol{\omega}_l \right]_i}{ \partial \left[ \boldsymbol{n}_l \right]_i } \\
+&=
+\frac{\partial E}{\partial \boldsymbol{n}_{l+1}}
+\frac{\partial \boldsymbol{n}_{l+1}}{ \partial \left[ \boldsymbol{\omega}_l \right]_i }
+\ \varphi'([\boldsymbol{n}_l]_i) \\
+&=
+\frac{\partial E}{\partial \boldsymbol{n}_{l+1}}
+[\boldsymbol{W}_{l+1}]_{*i}
+\ \varphi'([\boldsymbol{n}_l]_i) \\
+&= 
+\begin{bmatrix}
+\frac{\partial E}{\partial [\boldsymbol{n}_{l+1}]_1} 
+\cdots 
+\frac{\partial E}{\partial [\boldsymbol{n}_{l+1}]_N}
+\end{bmatrix}
+[\boldsymbol{W}_{l+1}]_{*i} 
+\ \varphi'([\boldsymbol{n}_l]_i) \\
+\end{align}
+
+So 
+$\frac{\partial E}{ \partial \left[ \textbf{\textit{n}}_l \right]_i }$
+can be obtianed if 
+$\frac{\partial E}{ \partial \textbf{\textit{n}}_{l+1} }$ is known.  What about the base case, the outermost layer $L$?
+
+\begin{align}
+\frac{\partial E}{ \partial \left[ \textbf{\textit{n}}_L \right]_i } 
+&= 
+\frac{\partial E}{ \partial \left[ \boldsymbol{\omega}_L \right]_i }
+\frac{\partial \left[ \boldsymbol{\omega}_L \right]_i}{ \partial \left[ \boldsymbol{n}_L \right]_i } \\
+&=
+\frac{\partial E}{ \partial \left[ \boldsymbol{\omega}_L \right]_i }
+\ \varphi'([\boldsymbol{n}_L]_i) \\
+&=
+E'(\boldsymbol{[\omega}_L]_i)
+\ \varphi'([\boldsymbol{n}_L]_i)
+\end{align}
+
+In the outermost case, $E$ takes $\boldsymbol{\omega}_L$ directly, instead of in the context of a larger composition.  This means that $E'$ with respect to one of the elements of $\boldsymbol{\omega}_L$ is a very natural process.  In order to reach the $l$th layer inductively using these formulas requires solving for each entry of 
+$\frac{\partial E}{ \partial \textbf{\textit{n}}_L }$
+individually.  It would be much less clumsy to solve simultaneously.
+\begin{align}
+\frac{\partial E}{ \partial \textbf{\textit{n}}_l } 
+&= 
+\frac{\partial E}{\partial \boldsymbol{n}_{l+1}}
+\frac{\partial \boldsymbol{n}_{l+1}}{ \partial \boldsymbol{\omega}_l }
+\frac{\partial \boldsymbol{\omega}_l }{ \partial \boldsymbol{n}_l }
+\end{align}
+
+Our old friend 
+$\frac{\partial \boldsymbol{\omega}_l }{ \partial \boldsymbol{n}_l }$
+has turned back up.  Luckily, we can reuse our work from (12).  Might as well give it a name while we are at it.
+\begin{align}
+\boldsymbol{\Psi}_l
+&= 
+\frac{\partial \boldsymbol{\omega}_l }{ \partial \boldsymbol{n}_l } \\
+&=
+\begin{bmatrix}
+\varphi'(\left[\boldsymbol{n}_l\right]_1) & \\ 
+& \ddots &\\ 
+& & \varphi'(\left[\boldsymbol{n}_l\right]_N)
+\end{bmatrix}
+\end{align}
+
+Next up is,
+\begin{align}
+\frac{\partial \boldsymbol{n}_{l+1}}{ \partial \boldsymbol{\omega}_l }
+&= 
+\frac{\partial }{ \partial \boldsymbol{\omega}_l } 
+\left[ 
+\boldsymbol{W}_{l+1} \boldsymbol{\omega}_l
+\right] \\
+&=
+\boldsymbol{W}_{l+1}
+\end{align}
+
+Shockingly convenient.
+\begin{align}
+\frac{\partial E}{ \partial \textbf{\textit{n}}_l } 
+&= 
+\frac{\partial E}{\partial \boldsymbol{n}_{l+1}}
+\boldsymbol{W}_{l+1}
+\boldsymbol{\Psi}_l
+\end{align}
+
+Now the entire recurrence relation is stated in one equations.  Finally a few finishing touches for clarity.
+\begin{align}
+\boldsymbol{\delta}_l 
+&=
+\frac{\partial E}{ \partial \textbf{\textit{n}}_l } \\
+\boldsymbol{\delta}_L
+&=
+\frac{\partial E}{\partial \boldsymbol{\omega}_{L}}
+\boldsymbol{\Psi}_L \\
+\boldsymbol{\delta}_{l-1}
+&= 
+\boldsymbol{\delta}_l
+\boldsymbol{W}_l
+\boldsymbol{\Psi}_{l-1}
+\end{align} 
+
+(35) can be used to propagate inward starting from the outermost layer $L$ of the FFNN.  And to solve to original problem, 
+
+\begin{align}
+\frac{\partial E}{ \partial \left[ \textbf{\textit{n}}_l \right]_i }
+&= 
+[\boldsymbol{\delta}_l]_i
+\end{align}
+
+and,
+\begin{align}
+\frac{\partial E}{\partial [\boldsymbol{W}_l]_{ij}}
+&=
+[\boldsymbol{\delta}_l]_i
+[\boldsymbol{\omega}_{l-1}]_j
+\end{align}
+
+therefore,
+\begin{align}
+\boldsymbol{\Delta}_l 
+&= 
+\left[ \frac{\partial E}{\partial [\boldsymbol{W}_{l}]_{ij}} \right] \\
+&=
+\left[  
+[\boldsymbol{\delta}_l]_i
+[\boldsymbol{\omega}_{l-1}]_j
+\right] \\
+&= 
+\begin{bmatrix}
+[\boldsymbol{\delta}_l]_1 [\boldsymbol{\omega}_{l-1}]_1 & \cdots & [\boldsymbol{\delta}_l]_1 [\boldsymbol{\omega}_{l-1}]_N \\ 
+\vdots &  \ddots & \vdots\\ 
+[\boldsymbol{\delta}_l]_M [\boldsymbol{\omega}_{l-1}]_1  & \cdots & [\boldsymbol{\delta}_l]_M [\boldsymbol{\omega}_{l-1}]_N
+\end{bmatrix} \\
+&=
+\boldsymbol{\delta}_l^T
+\boldsymbol{\omega}_{l-1}^T \\
+&=
+(\boldsymbol{\omega}_{l-1}
+\boldsymbol{\delta}_l)^T
+\end{align}
+.
+
+Lastly, the entire update formula for $\boldsymbol{W}_l$ is,
+\begin{align}
+\boldsymbol{W}_l'
+&=
+\boldsymbol{W}_l - \eta \boldsymbol{\Delta}_l
+\end{align}
+
+Where $\eta$ is the learning rate.
+\end{document}

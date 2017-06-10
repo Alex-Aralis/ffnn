@@ -1,0 +1,47 @@
+\documentclass[10pt]{article} % required
+\pagestyle{empty} % required
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage[T1]{fontenc}
+
+\begin{document}\definecolor{fgC}{rgb}{0,0,0}\color{fgC}\definecolor{bgC}{rgb}{1,1,1}\pagecolor{bgC} \begin{align*}\frac{\partial E}{\partial \left[ \bold{W}_\ell \right]_{ij}} =&
+\frac{\partial E}{\partial \left[ \boldsymbol{\omega}_\ell \right]_i } 
+\frac{\partial \left[ \boldsymbol{\omega}_\ell \right]_i }{ \partial \left[ \textbf{\textit{n}}_\ell \right]_i }
+\frac{ \partial \left[ \textbf{\textit{n}}_\ell \right]_i }{ \partial \left[ \bold{W}_\ell \right]_{ij} } \\ 
+\\
+\frac{ \partial \left[ \textbf{\textit{n}}_\ell \right]_i }{ \partial \left[ \bold{W}_\ell \right]_{ij} } =& \left[ \boldsymbol{\omega}_{\ell - 1} \right]_j \\
+\frac{\partial \left[ \boldsymbol{\omega}_\ell \right]_i }{ \partial \left[ \textbf{\textit{n}}_\ell \right]_i } =& 
+\varphi'(\left[ \boldsymbol{n}_\ell \right]_i) = \left[ \boldsymbol{\omega}_\ell \right]_i(1 - \left[ \boldsymbol{\omega}_\ell \right]_i) \\
+\frac{\partial E}{\partial \left[ \boldsymbol{\omega}_L \right]_i } =& \left[ \boldsymbol{\omega}_L \right]_i - \left[ \bold{t} \right]_i \\ 
+\\
+\frac{\partial E}{\partial \left[ \bold{W}_\ell \right]_{ij}} =& 
+\frac{\partial E}{\partial \left[ \boldsymbol{\omega}_\ell \right]_i } 
+\left[ \boldsymbol{\omega}_\ell \right]_i(1 - \left[ \boldsymbol{\omega}_\ell \right]_i) 
+\left[ \boldsymbol{\omega}_{\ell - 1} \right]_j \\
+\\
+\frac{\partial E}{\partial \left[ \boldsymbol{\omega}_{\ell - 1} \right]_j} =& 
+\frac{\partial E}{\partial \left[ \boldsymbol{\omega}_{\ell} \right]_j}
+\frac{\partial \left[ \boldsymbol{\omega}_{\ell} \right]_j}{\partial \textbf{\textit{n}}_\ell}
+\frac{\partial \textbf{\textit{n}}_\ell}{\partial \left[ \boldsymbol{\omega}_{\ell - 1} \right]_j} \\
+\left[ \boldsymbol{\delta}_{\ell} \right]_j =& \frac{\partial E}{\partial \left[ \boldsymbol{\omega}_{\ell} \right]_j} \\
+\left[ \boldsymbol{\delta}_{\ell - 1} \right]_j =& \left[ \boldsymbol{\delta}_{\ell} \right]_j
+\frac{\partial \left[ \boldsymbol{\omega}_{\ell} \right]_j}{\partial \textbf{\textit{n}}_\ell}
+\frac{\partial \textbf{\textit{n}}_\ell}{\partial \left[ \boldsymbol{\omega}_{\ell - 1} \right]_j} \\
+\\
+\frac{\partial E}{\partial \left[ \bold{W}_\ell \right]_{ij}} =& 
+\left[ \boldsymbol{\delta}_{\ell} \right]_i
+\left[ \boldsymbol{\omega}_\ell \right]_i(1 - \left[ \boldsymbol{\omega}_\ell \right]_i) 
+\left[ \boldsymbol{\omega}_{\ell - 1} \right]_j \\
+\boldsymbol{\Delta}_\ell =& \left[ \frac{\partial E}{\partial \left[ \bold{W}_\ell \right]_{ij}} \right] \\
+=& \begin{bmatrix}
+a_{11} & \cdots & a_{1n}\\ 
+\vdots &  \ddots & \vdots\\ 
+a_{m1} & \cdots & a_{mn}
+\end{bmatrix}
+\\
+\\
+\boldsymbol{\delta}_{\ell} =& \frac{\partial E}{\partial \boldsymbol{\omega}_{\ell}} \\
+\boldsymbol{\delta}_{\ell - 1} =& \boldsymbol{\delta}_{\ell} 
+\frac{\partial \boldsymbol{\omega}_{\ell}}{\partial \textbf{\textit{n}}_\ell}
+\frac{\partial \textbf{\textit{n}}_\ell}{\partial \boldsymbol{\omega}_{\ell - 1}} \\\end{align*}\end{document}
