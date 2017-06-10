@@ -3,7 +3,7 @@
 \usepackage{setspace}
 
 
-\pagestyle{empty} % required
+% \pagestyle{empty} % required
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{color}
@@ -150,8 +150,10 @@ However this evaluates to a scalar, which cannot be correct, because we are look
 and to be complete the proposed extension of vector differentiation to matrix differentiation is,
 \begin{align}
 \frac{\partial E}{\partial \boldsymbol{W}_l} 
-&= 
+= 
 \left[ \frac{\partial E}{\partial [\boldsymbol{W}_{l}]_{ij}} \right]^T
+=
+\boldsymbol{\Delta}_l^T
 \end{align}
 
 Now evaluation can proceed from the perspective of $\frac{\partial E}{\partial [\boldsymbol{W}_l]_{ij}}$ and factoring $\boldsymbol{\Delta}_l$ can be done at a later stage.
@@ -306,10 +308,16 @@ therefore,
 \boldsymbol{\delta}_l^T
 \boldsymbol{\omega}_{l-1}^T \\
 &=
-(\boldsymbol{\omega}_{l-1}0
-\boldsymbol{\delta}_l)^T
+(\boldsymbol{\omega}_{l-1}
+\boldsymbol{\delta}_l)^T \\
+&= \left(
+\frac{\partial \boldsymbol{n}_l}{\partial \boldsymbol{W}_l}
+\frac{\partial E}{ \partial \boldsymbol{n}_l }
+\right)^T \\
+&=
+\frac{\partial E}{\partial \boldsymbol{W}_l}^T
 \end{align}
-.
+Which is what we wanted in (17).  Strangely the chain rule ordering is exchanged.
 
 Lastly, the entire update formula for $\boldsymbol{W}_l$ is,
 \begin{align}
@@ -317,6 +325,45 @@ Lastly, the entire update formula for $\boldsymbol{W}_l$ is,
 &=
 \boldsymbol{W}_l - \eta \boldsymbol{\Delta}_l
 \end{align}
+where $\eta$ is the learning rate.
 
-Where $\eta$ is the learning rate.
+\section{Reframing}
+So we have the result, however the path to the solution was somehow unsatisfying.  Consider this restatement,
+\begin{align}
+\boldsymbol{\Delta}_l
+=
+\frac{\partial E}{\partial \boldsymbol{W}_l}^T
+= 
+\frac{\partial E}{\partial \boldsymbol{W}_l^T}
+\end{align}
+
+That's interesting, but $\boldsymbol{W}_l^T$ does not appear anywhere in the FFNN model.  So,
+\begin{align}
+\boldsymbol{n}_l^T
+&= 
+\boldsymbol{\omega}_{l-1}^T \boldsymbol{W}_l^T
+\end{align}
+
+Notice $\boldsymbol{n}_l^T$ is produced with a matrix multiplication where $\boldsymbol{W}_l^T$ is on the right.  This suggests a different chain rule decomposition.
+\begin{align}
+\frac{\partial E}{\partial \boldsymbol{W}_l^T}
+&=
+\frac{\partial E}{ \partial \boldsymbol{n}_l^T }
+\frac{\partial \boldsymbol{n}_l^T}{\partial \boldsymbol{W}_l^T} \\
+&=
+\frac{\partial E}{ \partial \boldsymbol{n}_l^T }
+\boldsymbol{\omega}_{l-1}^T \\
+&=
+\frac{\partial E}{ \partial \boldsymbol{n}_l}^T
+\boldsymbol{\omega}_{l-1}^T \\
+&=
+\boldsymbol{\delta}_l^T
+\boldsymbol{\omega}_{l-1}^T \\
+&=
+\boldsymbol{\Delta}_l
+\end{align}
+
+The same result, but without the chain rule inversion and now the result of differentiation is directly equal to $
+\boldsymbol{\Delta}_l$, the desired result.
+
 \end{document}
