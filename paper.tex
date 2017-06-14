@@ -7,8 +7,10 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{color}
+\usepackage[]{algorithm2e}
 
 \doublespacing
+\newcommand{\forcond}{$i=0$ \KwTo $n$}
 
 \title{\textbf{Back-Propagation of a Forward Feed Neural Net via Multivariate Vector Calculus } \\ Purdue University \\ \small{Computer Science}}
 \author{Alex Aralis}
@@ -365,5 +367,59 @@ Notice $\boldsymbol{n}_l^T$ is produced with a matrix multiplication where $\bol
 
 The same result, but without the chain rule inversion and now the result of differentiation is directly equal to $
 \boldsymbol{\Delta}_l$, the desired result.
+
+\section{The Algorithm}
+
+Here is an iterative approach that requires having precomputed $\boldsymbol{\omega}_*$.  Of course $\boldsymbol{\omega}_*$ can be recomputed directly each iteration by evaluating the FFNN out to the $l$th step.  This introduces $O(l^2)$ unnecessary matrix multiplications to an otherwise linear algorithm so should be avoided.  Also, $\boldsymbol{\omega}_0$ (the input) and $\boldsymbol{t}$ (the correct output) are needed to evaluate the FFNN and $E$ respectively. \\
+
+\begin{algorithm}[H]
+\KwResult{Updated $\boldsymbol{W}_*$, $\boldsymbol{W}_*'$.}
+$\boldsymbol{\delta}$
+$\gets$
+$\frac{\partial E}{\partial \boldsymbol{\omega}_{L}}\boldsymbol{\Psi}_L $ 
+
+\While{for $l$ from $L$ to $1$ inclusive} {
+	$\boldsymbol{W}_l' \gets\boldsymbol{W}_l - \eta \boldsymbol{\delta}^T \boldsymbol{\omega}_{l-1}^T$
+	
+	$\boldsymbol{\delta}$
+	$\gets$
+	$\boldsymbol{\delta}\boldsymbol{W}_l\boldsymbol{\Psi}_{l-1}$
+} 
+\end{algorithm}
+
+%\vspace{0.5cm}
+
+%Alternatively, a recursive approach can be used to simultaneously solve the FFNN and do the back propagation. \\
+
+%\vspace{0.5cm}
+
+%\begin{algorithm}
+%\SetKwProg{Fn}{Function}{}{}
+%\SetKwFunction{bp}{BackProp}%
+%\KwResult{Updated $\boldsymbol{W}_*$, $\boldsymbol{W}_*'$.} 
+%\Fn(){\bp{$\boldsymbol{\omega}$, $l$}}{
+	
+	
+%	\uIf{l = L}{
+%		$\boldsymbol{\delta}$
+%		$\gets$
+%		$\frac{\partial E}{\partial \boldsymbol{\omega}_{L}}\boldsymbol{\Psi}_L $ 
+%		
+%		$\boldsymbol{W'_*} \gets \text{empty list}$
+%	} \uElseIf{l = 0}{
+%		\KwRet{$\boldsymbol{W_*'}$}
+%	} \Else {
+%		$\boldsymbol{\delta'}$ $\gets$ \bp{$\varphi(\boldsymbol{W}_{l} \boldsymbol{\omega})$, $l+1$}
+%	}
+		
+%		$\boldsymbol{\delta}$
+%		$\gets$
+%		$\boldsymbol{\delta'}\boldsymbol{W}_l\boldsymbol{\Psi}_{l-1}$
+
+%	$\boldsymbol{W}' \gets\boldsymbol{W}_l - \eta \boldsymbol{\delta}^T \boldsymbol{\omega}^T$
+	
+%	\KwRet{$(\boldsymbol{\delta}, \boldsymbol{W'}:\boldsymbol{W'_*})$}
+%% }
+%\end{algorithm}
 
 \end{document}
